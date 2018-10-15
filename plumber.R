@@ -14,9 +14,8 @@ library(plumber)
 
 #* @apiTitle AusVotes API
 
-#* Echo back the input
-#* @param msg The message to echo
-#* @get /echo
-function(msg=""){
-  list(msg = paste0("The message is: '", msg, "'"))
+#* List the database tables
+#* @get /tables
+function() {
+  DBI::dbListTables(pool)
 }
