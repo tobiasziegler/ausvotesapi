@@ -14,4 +14,9 @@ pool <- pool::dbPool(
 )
 
 router <- plumber::plumb("plumber.R")
+
+router$registerHook("exit", function() {
+  pool::poolClose(pool)
+})
+
 router$run(port = 8000)
