@@ -1,1 +1,6 @@
 default:
+  dbname: "ausvotes"
+  host: "localhost"
+  port: 5432
+  user: "ausvotes"
+  password: "ausvotes"
