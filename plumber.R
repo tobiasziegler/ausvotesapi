@@ -19,3 +19,42 @@ library(plumber)
 function() {
   DBI::dbListTables(pool)
 }
+
+#* Provide summary data for a specified House of Reps division
+#* @serializer unboxedJSON
+#* @get /house/divisions/<id:int>
+function(id) {
+  feeds_tbl <- tbl(pool, "feeds")
+  contests_tbl <- tbl(pool, "contests")
+  candidates_tbl <- tbl(pool, "candidates")
+
+  preload_feed_id <-
+    feeds_tbl %>%
+    filter(results_verbosity == "Preload") %>%
+    select(feed_id) %>%
+    pull()
+
+  contest <-
+    contests_tbl %>%
+    filter(
+      feed_id == preload_feed_id,
+      contest_id == id
+    ) %>%
+    select(-feed_id) %>%
+    collect()
+
+  candidates <-
+    candidates_tbl %>%
+    filter(
+      feed_id == preload_feed_id,
+      contest_id == id
+    ) %>%
+    select(-feed_id, -contest_id) %>%
+    collect()
+
+  list(
+    feed_ids = list(preload = preload_feed_id),
+    contest = contest,
+    candidates = candidates
+  )
+}
